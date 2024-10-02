@@ -33,10 +33,20 @@ const getAllUsersFromDB = async (query: Record<string, unknown>) => {
   };
 };
 
-const getSingleUserFromDB = async (id: string) => {
+// const getSingleUserFromDB = async (id: string) => {
+//   const result = await User.findById(id)
+//     .populate('following', 'name email')
+//     .populate('followers', 'name email')
+//     .exec();
+
+//   return result;
+// };
+
+const getMeFromDB = async (id: string) => {
   const result = await User.findById(id)
-    .populate('following', 'name email')
-    .populate('followers', 'name email')
+    // .populate('following', 'name email')
+    // .populate('followers', 'name email')
+    .populate({ path: 'posts' })
     .exec();
 
   return result;
@@ -153,6 +163,7 @@ export {
   getAllUsersFromDB,
   updateUserIntoDB,
   followUserIntoDB,
-  getSingleUserFromDB,
+  // getSingleUserFromDB,
   unfollowUserFromDB,
+  getMeFromDB,
 };

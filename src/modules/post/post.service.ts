@@ -6,15 +6,12 @@ const createPostIntoDB = async (payload: TPost) => {
   return result;
 };
 
-const getPostsFromDB = async (filter: {
-  category?: 'Tips' | 'Story';
-  isPremium?: boolean;
-}) => {};
+const getPostsFromDB = async () => {};
 
 const getPostByIdFromDB = async (id: string) => {
   const result = await Post.findById(id).populate({
     path: 'comments',
-    populate: { path: 'userId' },
+    populate: { path: 'userId', select: 'name' },
   });
 
   return result;

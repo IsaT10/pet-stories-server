@@ -9,8 +9,6 @@ const CommentSchema = new Schema<TComment>(
   },
   {
     timestamps: true,
-    toJSON: { virtuals: true },
-    toObject: { virtuals: true },
   }
 );
 

@@ -11,7 +11,9 @@ import {
 } from './auth.service';
 
 const registerUser = catchAsync(async (req, res) => {
-  const data = await registerUserIntoDB(req.body);
+  console.log(req.file);
+
+  const data = await registerUserIntoDB(req.body, req?.file);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,

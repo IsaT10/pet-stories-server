@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import validateRequest from '../../middleware/validateRequest';
 import {
   ChangePasswordValidationSchema,
@@ -17,6 +17,7 @@ import {
   resetPassword,
 } from './auth.controller';
 import { auth } from '../../middleware/auth';
+import { multerUpload } from '../../config/multer.config';
 
 const router = express.Router();
 
@@ -31,6 +32,11 @@ router.post(
 
 router.post(
   '/register',
+  multerUpload.single('image'),
+  (req: Request, res: Response, next: NextFunction) => {
+    req.body = JSON.parse(req.body.data);
+    next();
+  },
   validateRequest(RegisterValidationSchema),
   registerUser
 );

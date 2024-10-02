@@ -12,6 +12,8 @@ const UserSchema = new Schema<TUser>(
       required: true,
       unique: true,
     },
+    image: { type: String },
+
     password: { type: String, required: true, select: 0 },
     role: { type: String, enum: ['admin', 'user'], default: 'user' },
 
@@ -29,7 +31,11 @@ const UserSchema = new Schema<TUser>(
     followers: [{ type: Schema.Types.ObjectId, ref: 'User' }],
     following: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  }
 );
 
 UserSchema.pre('save', async function (next) {
@@ -86,6 +92,12 @@ UserSchema.pre('save', async function (next) {
   }
 
   next();
+});
+
+UserSchema.virtual('posts', {
+  ref: 'Post',
+  foreignField: 'author',
+  localField: '_id',
 });
 
 export const User = model<TUser, UserModel>('User', UserSchema);

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import httpStatus from 'http-status';
 import { TLogin, TRegister } from './auth.interface';
 import jwt, { JwtPayload } from 'jsonwebtoken';
@@ -10,8 +11,10 @@ import { TUser } from '../User/user.interface';
 import { sendEmail } from '../../utils/sendEmail';
 import { decodedToken } from '../../utils/decodedToken';
 
-const registerUserIntoDB = async (payload: TRegister) => {
-  const result = await User.create(payload);
+const registerUserIntoDB = async (payload: TRegister, file?: any) => {
+  const userData = { ...payload, image: file?.path };
+  console.log(userData);
+  const result = await User.create(userData);
 
   return result;
 };

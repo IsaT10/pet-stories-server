@@ -19,7 +19,7 @@ const router = Router();
 router.post(
   '/:postId',
   auth('admin', 'user'),
-  //   validateRequest(createCommentValidationSchema),
+  validateRequest(createCommentValidationSchema),
   createComment
 );
 

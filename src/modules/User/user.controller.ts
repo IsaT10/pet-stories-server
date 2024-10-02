@@ -6,7 +6,7 @@ import {
   createUserIntoDB,
   followUserIntoDB,
   getAllUsersFromDB,
-  getSingleUserFromDB,
+  getMeFromDB,
   unfollowUserFromDB,
   updateUserIntoDB,
 } from './user.service';
@@ -32,14 +32,26 @@ const getAllUsers = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-const getSingleUser = catchAsync(async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const data = await getSingleUserFromDB(id);
+// const getSingleUser = catchAsync(async (req: Request, res: Response) => {
+//   const { id } = req.params;
+//   const data = await getSingleUserFromDB(id);
+
+//   sendResponse(res, {
+//     success: true,
+//     statusCode: httpStatus.OK,
+//     message: 'user retrived succefully',
+//     data,
+//   });
+// });
+
+const getMe = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.user;
+  const data = await getMeFromDB(id);
 
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
-    message: 'user retrived succefully',
+    message: 'Profile retrived succefully',
     data,
   });
 });
@@ -91,7 +103,8 @@ export {
   createUser,
   getAllUsers,
   updateUser,
-  getSingleUser,
+  // getSingleUser,
   followUserController,
   unfollowserController,
+  getMe,
 };

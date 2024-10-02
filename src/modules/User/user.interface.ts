@@ -1,8 +1,10 @@
+/* eslint-disable no-unused-vars */
 import { Model, Types } from 'mongoose';
 
 export type TUser = {
   name: string;
   password: string;
+  image: string;
   email: string;
   passwordChangeAt?: Date;
   status: 'basic' | 'premium' | 'blocked';

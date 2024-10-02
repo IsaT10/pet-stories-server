@@ -3,7 +3,7 @@ import {
   createUser,
   followUserController,
   getAllUsers,
-  getSingleUser,
+  getMe,
   unfollowserController,
   updateUser,
 } from './user.controller';
@@ -17,7 +17,7 @@ router.get('/', auth('admin'), getAllUsers);
 router.post('/', validateRequest(createUserValidationSchema), createUser);
 
 router.patch('/:id', updateUser);
-router.get('/:id', getSingleUser);
+// router.get('/:id', getSingleUser);
 router.patch(
   '/:targetUserId/follow',
   auth('admin', 'user'),
@@ -28,5 +28,7 @@ router.patch(
   auth('admin', 'user'),
   unfollowserController
 );
+
+router.get('/me', auth('user', 'admin'), getMe);
 
 export default router;
