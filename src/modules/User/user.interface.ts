@@ -1,13 +1,16 @@
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 
 export type TUser = {
   name: string;
   password: string;
   email: string;
   passwordChangeAt?: Date;
-  status: 'in-progress' | 'blocked';
+  status: 'basic' | 'premium' | 'blocked';
   isDeleted: boolean;
   role: 'admin' | 'user';
+  packageExpireAt: Date;
+  followers: Types.ObjectId[];
+  following: Types.ObjectId[];
 };
 
 export interface UserModel extends Model<TUser> {

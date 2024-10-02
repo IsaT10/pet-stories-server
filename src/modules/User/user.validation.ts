@@ -2,26 +2,18 @@ import { z } from 'zod';
 
 const createUserValidationSchema = z.object({
   body: z.object({
-    name: z
-      .string({ required_error: 'Name is required' })
-      .regex(
-        /^[A-Z][a-z]*$/,
-        'First name must start with a capital letter followed by lowercase letters.'
-      ),
-
+    name: z.string({ required_error: 'Name is required' }).trim(),
     email: z
       .string({ required_error: 'Email is required' })
-      .email('Provide a valid email.'),
-
-    password: z
-      .string({ required_error: 'Password is required' })
-      .min(8, 'Password can not be less than 8 character'),
-
-    passwordChangeAt: z
-      .string({ required_error: 'Password is required' })
-      .optional(),
-
-    role: z.string({ required_error: 'Role is required' }),
+      .email('Invalid email address'),
+    password: z.string({ required_error: 'Password is required' }),
+    role: z.enum(['admin', 'user']).default('user'),
+    status: z.enum(['basic', 'premium', 'blocked']).default('basic'),
+    passwordChangeAt: z.string().optional(),
+    packageExpireAt: z.string().optional(),
+    isDeleted: z.boolean().default(false),
+    followers: z.array(z.string()).optional(),
+    following: z.array(z.string()).optional(),
   }),
 });
 

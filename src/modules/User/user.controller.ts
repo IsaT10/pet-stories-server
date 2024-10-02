@@ -4,8 +4,10 @@ import sendResponse from '../../utils/sendResponse';
 import httpStatus from 'http-status';
 import {
   createUserIntoDB,
+  followUserIntoDB,
   getAllUsersFromDB,
   getSingleUserFromDB,
+  unfollowUserFromDB,
   updateUserIntoDB,
 } from './user.service';
 
@@ -54,4 +56,42 @@ const updateUser = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-export { createUser, getAllUsers, updateUser, getSingleUser };
+const followUserController = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.user;
+
+  const { targetUserId } = req.params;
+
+  const data = await followUserIntoDB(id, targetUserId);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'User followed successfully',
+    data,
+  });
+});
+const unfollowserController = catchAsync(
+  async (req: Request, res: Response) => {
+    const { id } = req.user;
+
+    const { targetUserId } = req.params;
+
+    const data = await unfollowUserFromDB(id, targetUserId);
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: 'User followed successfully',
+      data,
+    });
+  }
+);
+
+export {
+  createUser,
+  getAllUsers,
+  updateUser,
+  getSingleUser,
+  followUserController,
+  unfollowserController,
+};

@@ -17,14 +17,17 @@ const UserSchema = new Schema<TUser>(
 
     status: {
       type: String,
-      enum: ['in-progress', 'blocked'],
-      default: 'in-progress',
+      enum: ['basic', 'premium', 'blocked'],
+      default: 'basic',
     },
     passwordChangeAt: Date,
+    packageExpireAt: Date,
     isDeleted: {
       type: Boolean,
       default: false,
     },
+    followers: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+    following: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   },
   { timestamps: true }
 );
@@ -79,10 +82,7 @@ UserSchema.pre('save', async function (next) {
   const isUserExist = await User.findOne({ email: this.email });
 
   if (isUserExist) {
-    throw new AppError(
-      httpStatus.BAD_REQUEST,
-      `${isUserExist?.role.toUpperCase()} is already added.`
-    );
+    throw new AppError(httpStatus.BAD_REQUEST, `User is already creaated.`);
   }
 
   next();
