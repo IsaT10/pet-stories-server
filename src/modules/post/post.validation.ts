@@ -15,13 +15,8 @@ const createPostValidationSchema = z.object({
     category: z.enum(['Tips', 'Story'], {
       required_error: 'Category is required',
     }),
-    images: z
-      .array(z.string().url(), {
-        required_error: 'Images must be an array of valid URLs.',
-      })
-      .optional(),
-    isPremium: z.boolean(),
-    author: z.string({ required_error: 'User ID is required' }),
+    thumbnail: z.string().optional(),
+    isPremium: z.boolean().optional(),
   }),
 });
 

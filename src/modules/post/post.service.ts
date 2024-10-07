@@ -1,41 +1,90 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import httpStatus from 'http-status';
+import AppError from '../../error/appError';
 import { TPost } from './post.intrface';
 import { Post } from './post.model';
+import QueryBuilder from '../../builder/QueryBuilder';
 
-const createPostIntoDB = async (payload: TPost) => {
-  const result = await Post.create(payload);
+const createPostIntoDB = async (
+  authorId: string,
+  payload: TPost,
+  file?: any
+) => {
+  const postData = { ...payload, author: authorId, thumbnail: file?.path };
+  const result = await Post.create(postData);
   return result;
 };
 
-const getPostsFromDB = async () => {};
+const updatePostInDB = async (postId: string, payload: TPost, file?: any) => {
+  const postData = { ...payload, thumbnail: file?.path };
+  const result = await Post.findByIdAndUpdate(postId, postData, { new: true });
+  return result;
+};
+
+const deletePostFromDB = async (postId: string) => {
+  const result = await Post.findByIdAndDelete(postId);
+  return result;
+};
+
+const getAllPostsFromDB = async (query: Record<string, unknown>) => {
+  const searchableFields = ['content'];
+
+  const postQuery = new QueryBuilder(
+    Post.find()
+      .populate({
+        path: 'comments',
+        populate: { path: 'userId', select: 'name image' },
+      })
+      .populate('author', 'name image'),
+    query
+  )
+    .search(searchableFields)
+    .fields()
+    .pagination()
+    .sort()
+    .filter();
+
+  const result = await postQuery.queryModel;
+  const meta = await postQuery.countTotal();
+
+  return {
+    meta,
+    result,
+  };
+};
 
 const getPostByIdFromDB = async (id: string) => {
   const result = await Post.findById(id).populate({
     path: 'comments',
-    populate: { path: 'userId', select: 'name' },
+    populate: { path: 'userId', select: 'name image' },
   });
+
+  if (!result) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Post not found!');
+  }
 
   return result;
 };
 
-const updatePostInDB = async (
-  postId: string,
-  payload: Partial<TPost>,
-  authorId: string
-) => {
-  const post = await Post.findById(postId);
+// const updatePostInDB = async (
+//   postId: string,
+//   payload: Partial<TPost>,
+//   authorId: string
+// ) => {
+//   const post = await Post.findById(postId);
 
-  // Check if the post exists and if the author is the same
-  if (!post || String(post.author) !== authorId) {
-    throw new Error(
-      'Post not found or user is not authorized to edit this post'
-    );
-  }
+//   // Check if the post exists and if the author is the same
+//   if (!post || String(post.author) !== authorId) {
+//     throw new Error(
+//       'Post not found or user is not authorized to edit this post'
+//     );
+//   }
 
-  // Update the post
-  Object.assign(post, payload); // Merge the new values
-  const updatedPost = await post.save();
-  return updatedPost;
-};
+//   // Update the post
+//   Object.assign(post, payload); // Merge the new values
+//   const updatedPost = await post.save();
+//   return updatedPost;
+// };
 
 const upvotePostInDB = async (postId: string, userId: string) => {
   return Post.upvotePost(postId, userId);
@@ -50,6 +99,7 @@ export {
   upvotePostInDB,
   downvotePostInDB,
   updatePostInDB,
-  getPostsFromDB,
+  getAllPostsFromDB,
   getPostByIdFromDB,
+  deletePostFromDB,
 };

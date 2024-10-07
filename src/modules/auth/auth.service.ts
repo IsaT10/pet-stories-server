@@ -13,10 +13,24 @@ import { decodedToken } from '../../utils/decodedToken';
 
 const registerUserIntoDB = async (payload: TRegister, file?: any) => {
   const userData = { ...payload, image: file?.path };
-  console.log(userData);
   const result = await User.create(userData);
 
-  return result;
+  const jwtPayload = {
+    id: result._id,
+    email: result.email,
+    name: result.name,
+    role: result.role,
+    status: result.status,
+    image: result.image,
+  };
+
+  const accessToken = createToken(
+    jwtPayload,
+    config.jwt_access_secret as string,
+    config.jwt_access_expires as string
+  );
+
+  return { result, accessToken };
 };
 
 const loginUserDB = async (payload: TLogin) => {
@@ -35,8 +49,11 @@ const loginUserDB = async (payload: TLogin) => {
 
   const jwtPayload = {
     id: validUser._id,
+    name: validUser.name,
     email: validUser.email,
     role: validUser.role,
+    status: validUser.status,
+    image: validUser.image,
   };
 
   const refreshToken = createToken(
@@ -139,7 +156,7 @@ const forgetPasswordInDB = async (email: string) => {
     config.jwt_access_secret as string,
     '10m'
   );
-  const resetLink = `${config.reset_password_url}?email=${user.email}&token=${resetToken}`;
+  const resetLink = `${config.reset_password_url}/reset-password?email=${user.email}&token=${resetToken}`;
   sendEmail(user.email, resetLink);
 };
 

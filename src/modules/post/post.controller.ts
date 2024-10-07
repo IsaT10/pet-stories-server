@@ -7,10 +7,14 @@ import {
   upvotePostInDB,
   downvotePostInDB,
   getPostByIdFromDB,
+  getAllPostsFromDB,
+  updatePostInDB,
+  deletePostFromDB,
 } from './post.service';
 
 const createPost = catchAsync(async (req: Request, res: Response) => {
-  const data = await createPostIntoDB(req.body);
+  const { id } = req.user;
+  const data = await createPostIntoDB(id, req.body, req?.file);
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.CREATED,
@@ -18,7 +22,37 @@ const createPost = catchAsync(async (req: Request, res: Response) => {
     data,
   });
 });
+const updatePost = catchAsync(async (req: Request, res: Response) => {
+  // const { id } = req.user;
+  const { postId } = req.params;
+  const data = await updatePostInDB(postId, req.body, req?.file);
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.CREATED,
+    message: 'Post updated successfully',
+    data,
+  });
+});
 
+const getAllPosts = catchAsync(async (req: Request, res: Response) => {
+  const data = await getAllPostsFromDB(req.query);
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'Posts retrieved successfully',
+    data,
+  });
+});
+const deletePost = catchAsync(async (req: Request, res: Response) => {
+  const { postId } = req.params;
+  const data = await deletePostFromDB(postId);
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'Posts deleted successfully',
+    data,
+  });
+});
 const getPostById = catchAsync(async (req: Request, res: Response) => {
   const { postId } = req.params;
   const data = await getPostByIdFromDB(postId);
@@ -46,9 +80,9 @@ const upvotePostController = catchAsync(async (req: Request, res: Response) => {
 const downvotePostController = catchAsync(
   async (req: Request, res: Response) => {
     const { postId } = req.params;
-    const { userId } = req.query;
+    const { id } = req.user;
 
-    const data = await downvotePostInDB(postId, userId as string);
+    const data = await downvotePostInDB(postId, id);
     sendResponse(res, {
       success: true,
       statusCode: httpStatus.OK,
@@ -63,4 +97,7 @@ export {
   upvotePostController,
   downvotePostController,
   getPostById,
+  getAllPosts,
+  updatePost,
+  deletePost,
 };

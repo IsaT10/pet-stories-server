@@ -4,7 +4,7 @@ import { Model, Types } from 'mongoose';
 export interface TPost {
   content: string;
   category: 'Tips' | 'Story';
-  images: string[];
+  thumbnail: string;
   author: Types.ObjectId;
   upvotes: Types.ObjectId;
   downvotes: Types.ObjectId;

@@ -11,13 +11,11 @@ import {
 } from './auth.service';
 
 const registerUser = catchAsync(async (req, res) => {
-  console.log(req.file);
-
-  const data = await registerUserIntoDB(req.body, req?.file);
+  const { accessToken } = await registerUserIntoDB(req.body, req?.file);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
-    data,
+    data: { accessToken },
     success: true,
     message: 'User register successfully',
   });
@@ -68,6 +66,7 @@ const refreshToken = catchAsync(async (req, res) => {
 
 const forgetPassword = catchAsync(async (req, res) => {
   const { email } = req.body;
+  console.log(email);
   const data = await forgetPasswordInDB(email);
 
   sendResponse(res, {
@@ -80,6 +79,8 @@ const forgetPassword = catchAsync(async (req, res) => {
 
 const resetPassword = catchAsync(async (req, res) => {
   const token = req.headers?.authorization?.split(' ')[1];
+
+  console.log(token);
   const data = await resetPasswordInDB(req.body, token!);
 
   sendResponse(res, {

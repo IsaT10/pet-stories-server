@@ -33,7 +33,16 @@ const getAllUsersFromDB = async (query: Record<string, unknown>) => {
   };
 };
 
-// const getSingleUserFromDB = async (id: string) => {
+const getSingleUserFromDB = async (id: string) => {
+  const result = await User.findById(id)
+    .populate('following', 'name email')
+    .populate('followers', 'name email')
+    .exec();
+
+  return result;
+};
+
+// const getSingleUserFromDB = async (id: string[]) => {
 //   const result = await User.findById(id)
 //     .populate('following', 'name email')
 //     .populate('followers', 'name email')
@@ -44,16 +53,25 @@ const getAllUsersFromDB = async (query: Record<string, unknown>) => {
 
 const getMeFromDB = async (id: string) => {
   const result = await User.findById(id)
-    // .populate('following', 'name email')
-    // .populate('followers', 'name email')
-    .populate({ path: 'posts' })
+    .populate('following', 'name image')
+    .populate('followers', 'name image')
+    .populate({
+      path: 'posts',
+      populate: { path: 'author', select: 'name image' },
+    })
     .exec();
 
   return result;
 };
 
-const updateUserIntoDB = async (id: string, payload: Partial<TUser>) => {
-  const result = await User.findByIdAndUpdate(id, payload, { new: true });
+const updateUserIntoDB = async (
+  id: string,
+  payload: Partial<TUser>,
+  file?: any
+) => {
+  console.log(payload);
+  const userData = { ...payload, image: file?.path };
+  const result = await User.findByIdAndUpdate(id, userData, { new: true });
 
   return result;
 };
@@ -163,7 +181,8 @@ export {
   getAllUsersFromDB,
   updateUserIntoDB,
   followUserIntoDB,
-  // getSingleUserFromDB,
+  getSingleUserFromDB,
+  // getArrayOfUsersFromDB,
   unfollowUserFromDB,
   getMeFromDB,
 };

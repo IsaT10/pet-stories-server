@@ -7,6 +7,7 @@ import {
   followUserIntoDB,
   getAllUsersFromDB,
   getMeFromDB,
+  getSingleUserFromDB,
   unfollowUserFromDB,
   updateUserIntoDB,
 } from './user.service';
@@ -32,17 +33,29 @@ const getAllUsers = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-// const getSingleUser = catchAsync(async (req: Request, res: Response) => {
-//   const { id } = req.params;
-//   const data = await getSingleUserFromDB(id);
+// const getArrayOfUsers = catchAsync(async (req: Request, res: Response) => {
+//   const { userIds } = req.body;
+//   const data = getArrayOfUsersFromDB(userIds);
 
 //   sendResponse(res, {
 //     success: true,
 //     statusCode: httpStatus.OK,
-//     message: 'user retrived succefully',
+//     message: 'Users retrived succefully',
 //     data,
 //   });
 // });
+
+const getSingleUser = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const data = await getSingleUserFromDB(id);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'user retrived succefully',
+    data,
+  });
+});
 
 const getMe = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.user;
@@ -58,12 +71,12 @@ const getMe = catchAsync(async (req: Request, res: Response) => {
 
 const updateUser = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const data = await updateUserIntoDB(id, req.body);
+  const data = await updateUserIntoDB(id, req.body, req?.file);
 
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
-    message: 'user updated succefully',
+    message: 'User profile updated successfully',
     data,
   });
 });
@@ -103,8 +116,9 @@ export {
   createUser,
   getAllUsers,
   updateUser,
-  // getSingleUser,
+  getSingleUser,
   followUserController,
   unfollowserController,
   getMe,
+  // getArrayOfUsers,
 };

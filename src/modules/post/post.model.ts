@@ -8,7 +8,7 @@ const PostSchema = new Schema(
     // title: { type: String, required: true },
     content: { type: String, required: true },
     category: { type: String, enum: ['Tips', 'Story'], required: true },
-    images: { type: [String], required: false },
+    thumbnail: { type: String, required: false },
     author: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     isPremium: { type: Boolean },
     upvotes: [{ type: Schema.Types.ObjectId, ref: 'User' }],
