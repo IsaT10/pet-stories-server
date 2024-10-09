@@ -6,6 +6,7 @@ import {
   getMe,
   getSingleUser,
   unfollowserController,
+  updateStatus,
   updateUser,
 } from './user.controller';
 import validateRequest from '../../middleware/validateRequest';
@@ -28,6 +29,7 @@ router.patch(
   },
   updateUser
 );
+router.patch('/change-status/:id', updateStatus);
 router.get('/:id', getSingleUser);
 // router.post('/batch', getArrayOfUsers);
 router.patch(

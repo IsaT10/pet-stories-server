@@ -34,8 +34,8 @@ const getCommentById = catchAsync(async (req: Request, res: Response) => {
 
 const updateComment = catchAsync(async (req: Request, res: Response) => {
   const { commentId } = req.params;
-  const { text } = req.body;
-  const data = await updateCommentInDB(commentId, text);
+
+  const data = await updateCommentInDB(commentId, req.body);
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
@@ -50,7 +50,7 @@ const deleteComment = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
-    message: 'Comment updated successfully',
+    message: 'Comment deleted successfully',
     data: null,
   });
 });

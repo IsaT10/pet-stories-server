@@ -27,7 +27,7 @@ const deletePostFromDB = async (postId: string) => {
 };
 
 const getAllPostsFromDB = async (query: Record<string, unknown>) => {
-  const searchableFields = ['content'];
+  const searchableFields = ['content', 'category'];
 
   const postQuery = new QueryBuilder(
     Post.find()
@@ -35,20 +35,17 @@ const getAllPostsFromDB = async (query: Record<string, unknown>) => {
         path: 'comments',
         populate: { path: 'userId', select: 'name image' },
       })
-      .populate('author', 'name image'),
+      .populate('author', 'name image status'),
     query
   )
     .search(searchableFields)
     .fields()
-    .pagination()
     .sort()
     .filter();
 
   const result = await postQuery.queryModel;
-  const meta = await postQuery.countTotal();
 
   return {
-    meta,
     result,
   };
 };

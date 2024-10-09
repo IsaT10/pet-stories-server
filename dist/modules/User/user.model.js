@@ -40,7 +40,11 @@ const UserSchema = new mongoose_1.Schema({
     },
     followers: [{ type: mongoose_1.Schema.Types.ObjectId, ref: 'User' }],
     following: [{ type: mongoose_1.Schema.Types.ObjectId, ref: 'User' }],
-}, { timestamps: true });
+}, {
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+});
 UserSchema.pre('save', function (next) {
     return __awaiter(this, void 0, void 0, function* () {
         const user = this;
@@ -81,5 +85,10 @@ UserSchema.pre('save', function (next) {
         }
         next();
     });
+});
+UserSchema.virtual('posts', {
+    ref: 'Post',
+    foreignField: 'author',
+    localField: '_id',
 });
 exports.User = (0, mongoose_1.model)('User', UserSchema);

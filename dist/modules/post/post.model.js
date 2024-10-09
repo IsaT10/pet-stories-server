@@ -20,7 +20,7 @@ const PostSchema = new mongoose_1.Schema({
     // title: { type: String, required: true },
     content: { type: String, required: true },
     category: { type: String, enum: ['Tips', 'Story'], required: true },
-    images: { type: [String], required: false },
+    thumbnail: { type: String, required: false },
     author: { type: mongoose_1.Schema.Types.ObjectId, ref: 'User', required: true },
     isPremium: { type: Boolean },
     upvotes: [{ type: mongoose_1.Schema.Types.ObjectId, ref: 'User' }],

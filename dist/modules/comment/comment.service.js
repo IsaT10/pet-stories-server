@@ -31,12 +31,13 @@ const getCommentByIdFromDB = (commentId) => __awaiter(void 0, void 0, void 0, fu
     return result;
 });
 exports.getCommentByIdFromDB = getCommentByIdFromDB;
-const updateCommentInDB = (commentId, text) => __awaiter(void 0, void 0, void 0, function* () {
-    const comment = yield comment_model_1.Comment.findById(commentId);
+const updateCommentInDB = (commentId, payload) => __awaiter(void 0, void 0, void 0, function* () {
+    const comment = yield comment_model_1.Comment.findByIdAndUpdate(commentId, payload, {
+        new: true,
+    });
     if (!comment) {
         throw new appError_1.default(http_status_1.default.NOT_FOUND, 'Comment not found!');
     }
-    comment.comment = text;
     return comment.save();
 });
 exports.updateCommentInDB = updateCommentInDB;

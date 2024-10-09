@@ -69,9 +69,14 @@ const updateUserIntoDB = async (
   payload: Partial<TUser>,
   file?: any
 ) => {
-  console.log(payload);
   const userData = { ...payload, image: file?.path };
   const result = await User.findByIdAndUpdate(id, userData, { new: true });
+
+  return result;
+};
+
+const updateStatusInDB = async (id: string, payload: Partial<TUser>) => {
+  const result = await User.findByIdAndUpdate(id, payload, { new: true });
 
   return result;
 };
@@ -182,6 +187,7 @@ export {
   updateUserIntoDB,
   followUserIntoDB,
   getSingleUserFromDB,
+  updateStatusInDB,
   // getArrayOfUsersFromDB,
   unfollowUserFromDB,
   getMeFromDB,

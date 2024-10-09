@@ -17,13 +17,8 @@ const createPostValidationSchema = zod_1.z.object({
         category: zod_1.z.enum(['Tips', 'Story'], {
             required_error: 'Category is required',
         }),
-        images: zod_1.z
-            .array(zod_1.z.string().url(), {
-            required_error: 'Images must be an array of valid URLs.',
-        })
-            .optional(),
-        isPremium: zod_1.z.boolean(),
-        author: zod_1.z.string({ required_error: 'User ID is required' }),
+        thumbnail: zod_1.z.string().optional(),
+        isPremium: zod_1.z.boolean().optional(),
     }),
 });
 exports.createPostValidationSchema = createPostValidationSchema;

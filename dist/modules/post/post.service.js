@@ -8,36 +8,79 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getPostByIdFromDB = exports.getPostsFromDB = exports.updatePostInDB = exports.downvotePostInDB = exports.upvotePostInDB = exports.createPostIntoDB = void 0;
+exports.deletePostFromDB = exports.getPostByIdFromDB = exports.getAllPostsFromDB = exports.updatePostInDB = exports.downvotePostInDB = exports.upvotePostInDB = exports.createPostIntoDB = void 0;
+/* eslint-disable @typescript-eslint/no-explicit-any */
+const http_status_1 = __importDefault(require("http-status"));
+const appError_1 = __importDefault(require("../../error/appError"));
 const post_model_1 = require("./post.model");
-const createPostIntoDB = (payload) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield post_model_1.Post.create(payload);
+const QueryBuilder_1 = __importDefault(require("../../builder/QueryBuilder"));
+const createPostIntoDB = (authorId, payload, file) => __awaiter(void 0, void 0, void 0, function* () {
+    const postData = Object.assign(Object.assign({}, payload), { author: authorId, thumbnail: file === null || file === void 0 ? void 0 : file.path });
+    const result = yield post_model_1.Post.create(postData);
     return result;
 });
 exports.createPostIntoDB = createPostIntoDB;
-const getPostsFromDB = () => __awaiter(void 0, void 0, void 0, function* () { });
-exports.getPostsFromDB = getPostsFromDB;
+const updatePostInDB = (postId, payload, file) => __awaiter(void 0, void 0, void 0, function* () {
+    const postData = Object.assign(Object.assign({}, payload), { thumbnail: file === null || file === void 0 ? void 0 : file.path });
+    const result = yield post_model_1.Post.findByIdAndUpdate(postId, postData, { new: true });
+    return result;
+});
+exports.updatePostInDB = updatePostInDB;
+const deletePostFromDB = (postId) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield post_model_1.Post.findByIdAndDelete(postId);
+    return result;
+});
+exports.deletePostFromDB = deletePostFromDB;
+const getAllPostsFromDB = (query) => __awaiter(void 0, void 0, void 0, function* () {
+    const searchableFields = ['content', 'category'];
+    const postQuery = new QueryBuilder_1.default(post_model_1.Post.find()
+        .populate({
+        path: 'comments',
+        populate: { path: 'userId', select: 'name image' },
+    })
+        .populate('author', 'name image status'), query)
+        .search(searchableFields)
+        .fields()
+        .sort()
+        .filter();
+    const result = yield postQuery.queryModel;
+    return {
+        result,
+    };
+});
+exports.getAllPostsFromDB = getAllPostsFromDB;
 const getPostByIdFromDB = (id) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield post_model_1.Post.findById(id).populate({
         path: 'comments',
-        populate: { path: 'userId', select: 'name' },
+        populate: { path: 'userId', select: 'name image' },
     });
+    if (!result) {
+        throw new appError_1.default(http_status_1.default.NOT_FOUND, 'Post not found!');
+    }
     return result;
 });
 exports.getPostByIdFromDB = getPostByIdFromDB;
-const updatePostInDB = (postId, payload, authorId) => __awaiter(void 0, void 0, void 0, function* () {
-    const post = yield post_model_1.Post.findById(postId);
-    // Check if the post exists and if the author is the same
-    if (!post || String(post.author) !== authorId) {
-        throw new Error('Post not found or user is not authorized to edit this post');
-    }
-    // Update the post
-    Object.assign(post, payload); // Merge the new values
-    const updatedPost = yield post.save();
-    return updatedPost;
-});
-exports.updatePostInDB = updatePostInDB;
+// const updatePostInDB = async (
+//   postId: string,
+//   payload: Partial<TPost>,
+//   authorId: string
+// ) => {
+//   const post = await Post.findById(postId);
+//   // Check if the post exists and if the author is the same
+//   if (!post || String(post.author) !== authorId) {
+//     throw new Error(
+//       'Post not found or user is not authorized to edit this post'
+//     );
+//   }
+//   // Update the post
+//   Object.assign(post, payload); // Merge the new values
+//   const updatedPost = await post.save();
+//   return updatedPost;
+// };
 const upvotePostInDB = (postId, userId) => __awaiter(void 0, void 0, void 0, function* () {
     return post_model_1.Post.upvotePost(postId, userId);
 });

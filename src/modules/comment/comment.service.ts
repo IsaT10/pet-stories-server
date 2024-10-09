@@ -22,13 +22,14 @@ const getCommentByIdFromDB = async (commentId: string) => {
   return result;
 };
 
-const updateCommentInDB = async (commentId: string, text: string) => {
-  const comment = await Comment.findById(commentId);
+const updateCommentInDB = async (commentId: string, payload: TComment) => {
+  const comment = await Comment.findByIdAndUpdate(commentId, payload, {
+    new: true,
+  });
   if (!comment) {
     throw new AppError(httpStatus.NOT_FOUND, 'Comment not found!');
   }
 
-  comment.comment = text;
   return comment.save();
 };
 

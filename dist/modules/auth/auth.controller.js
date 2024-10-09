@@ -29,11 +29,10 @@ const catchAsync_1 = __importDefault(require("../../utils/catchAsync"));
 const sendResponse_1 = __importDefault(require("../../utils/sendResponse"));
 const auth_service_1 = require("./auth.service");
 const registerUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(req.file);
-    const data = yield (0, auth_service_1.registerUserIntoDB)(req.body, req === null || req === void 0 ? void 0 : req.file);
+    const { accessToken } = yield (0, auth_service_1.registerUserIntoDB)(req.body, req === null || req === void 0 ? void 0 : req.file);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
-        data,
+        data: { accessToken },
         success: true,
         message: 'User register successfully',
     });
@@ -78,6 +77,7 @@ const refreshToken = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, v
 exports.refreshToken = refreshToken;
 const forgetPassword = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email } = req.body;
+    console.log(email);
     const data = yield (0, auth_service_1.forgetPasswordInDB)(email);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
@@ -90,6 +90,7 @@ exports.forgetPassword = forgetPassword;
 const resetPassword = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     const token = (_b = (_a = req.headers) === null || _a === void 0 ? void 0 : _a.authorization) === null || _b === void 0 ? void 0 : _b.split(' ')[1];
+    console.log(token);
     const data = yield (0, auth_service_1.resetPasswordInDB)(req.body, token);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,

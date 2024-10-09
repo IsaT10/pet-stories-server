@@ -42,8 +42,7 @@ const getCommentById = (0, catchAsync_1.default)((req, res) => __awaiter(void 0,
 exports.getCommentById = getCommentById;
 const updateComment = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { commentId } = req.params;
-    const { text } = req.body;
-    const data = yield (0, comment_service_1.updateCommentInDB)(commentId, text);
+    const data = yield (0, comment_service_1.updateCommentInDB)(commentId, req.body);
     (0, sendResponse_1.default)(res, {
         success: true,
         statusCode: http_status_1.default.OK,
@@ -58,7 +57,7 @@ const deleteComment = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, 
     (0, sendResponse_1.default)(res, {
         success: true,
         statusCode: http_status_1.default.OK,
-        message: 'Comment updated successfully',
+        message: 'Comment deleted successfully',
         data: null,
     });
 }));

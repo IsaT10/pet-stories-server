@@ -22,6 +22,23 @@ app.get('/test', (req, res) => {
 });
 // api routes
 app.use('/api/v1', routes_1.default);
+// app.post('/create-payment-intent', async (req, res) => {
+//   const { amount } = req.body; // Payment amount in smallest currency unit, e.g., cents for USD
+//   console.log(amount);
+//   try {
+//     const paymentIntent = await stripe.paymentIntents.create({
+//       amount: parseInt(amount || 1 * 100), // Amount in cents
+//       currency: 'usd', // Specify the currency
+//       payment_method_types: ['card'],
+//     });
+//     console.log(paymentIntent);
+//     res.send({
+//       clientSecret: paymentIntent.client_secret,
+//     });
+//   } catch (error) {
+//     res.status(500).json({ message: 'Payment method is not work properly' });
+//   }
+// });
 // not found route
 app.all('*', noFoundRoute_1.notFoundRoute);
 // handle error globally

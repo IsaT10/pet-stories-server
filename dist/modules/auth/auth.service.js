@@ -25,9 +25,17 @@ const sendEmail_1 = require("../../utils/sendEmail");
 const decodedToken_1 = require("../../utils/decodedToken");
 const registerUserIntoDB = (payload, file) => __awaiter(void 0, void 0, void 0, function* () {
     const userData = Object.assign(Object.assign({}, payload), { image: file === null || file === void 0 ? void 0 : file.path });
-    console.log(userData);
     const result = yield user_model_1.User.create(userData);
-    return result;
+    const jwtPayload = {
+        id: result._id,
+        email: result.email,
+        name: result.name,
+        role: result.role,
+        status: result.status,
+        image: result.image,
+    };
+    const accessToken = (0, authutils_1.createToken)(jwtPayload, config_1.default.jwt_access_secret, config_1.default.jwt_access_expires);
+    return { result, accessToken };
 });
 exports.registerUserIntoDB = registerUserIntoDB;
 const loginUserDB = (payload) => __awaiter(void 0, void 0, void 0, function* () {
@@ -38,8 +46,11 @@ const loginUserDB = (payload) => __awaiter(void 0, void 0, void 0, function* () 
     }
     const jwtPayload = {
         id: validUser._id,
+        name: validUser.name,
         email: validUser.email,
         role: validUser.role,
+        status: validUser.status,
+        image: validUser.image,
     };
     const refreshToken = (0, authutils_1.createToken)(jwtPayload, config_1.default.jwt_refresh_secret, config_1.default.jwt_refresh_expires);
     const accessToken = (0, authutils_1.createToken)(jwtPayload, config_1.default.jwt_access_secret, config_1.default.jwt_access_expires);
@@ -91,7 +102,7 @@ const forgetPasswordInDB = (email) => __awaiter(void 0, void 0, void 0, function
     const user = yield user_model_1.User.isValidUser(email);
     const jwtPayload = { email: user.email, role: user.role };
     const resetToken = (0, authutils_1.createToken)(jwtPayload, config_1.default.jwt_access_secret, '10m');
-    const resetLink = `${config_1.default.reset_password_url}?email=${user.email}&token=${resetToken}`;
+    const resetLink = `${config_1.default.reset_password_url}/reset-password?email=${user.email}&token=${resetToken}`;
     (0, sendEmail_1.sendEmail)(user.email, resetLink);
 });
 exports.forgetPasswordInDB = forgetPasswordInDB;
