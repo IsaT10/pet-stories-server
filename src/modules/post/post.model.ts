@@ -3,7 +3,7 @@ import httpStatus from 'http-status';
 import AppError from '../../error/appError';
 import { PostModel, TPost } from './post.intrface';
 
-const PostSchema = new Schema(
+const PostSchema = new Schema<TPost>(
   {
     // title: { type: String, required: true },
     content: { type: String, required: true },
@@ -11,6 +11,7 @@ const PostSchema = new Schema(
     thumbnail: { type: String, required: false },
     author: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     isPremium: { type: Boolean },
+    isPublish: { type: Boolean },
     upvotes: [{ type: Schema.Types.ObjectId, ref: 'User' }],
     downvotes: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   },

@@ -27,7 +27,7 @@ const getPaymentFromDB = async (query: Record<string, unknown>) => {
   const paymentQuery = new QueryBuilder(
     Payment.find().populate({
       path: 'user',
-      select: 'name image email',
+      select: 'name status email',
     }),
     query
   )

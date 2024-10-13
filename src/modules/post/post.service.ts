@@ -28,9 +28,14 @@ const deletePostFromDB = async (postId: string) => {
 
 const getAllPostsFromDB = async (query: Record<string, unknown>) => {
   const searchableFields = ['content', 'category'];
+  let options = {};
+
+  if (query.isPremium) {
+    options = { isPublish: true };
+  }
 
   const postQuery = new QueryBuilder(
-    Post.find()
+    Post.find(options)
       .populate({
         path: 'comments',
         populate: { path: 'userId', select: 'name image' },
@@ -40,6 +45,7 @@ const getAllPostsFromDB = async (query: Record<string, unknown>) => {
   )
     .search(searchableFields)
     .fields()
+    .pagination()
     .sort()
     .filter();
 
@@ -48,6 +54,12 @@ const getAllPostsFromDB = async (query: Record<string, unknown>) => {
   return {
     result,
   };
+};
+
+const updatePostStatusInDB = async (id: string, payload: Partial<TPost>) => {
+  const result = await Post.findByIdAndUpdate(id, payload, { new: true });
+
+  return result;
 };
 
 const getPostByIdFromDB = async (id: string) => {
@@ -99,4 +111,5 @@ export {
   getAllPostsFromDB,
   getPostByIdFromDB,
   deletePostFromDB,
+  updatePostStatusInDB,
 };

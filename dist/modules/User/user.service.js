@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getMeFromDB = exports.unfollowUserFromDB = exports.updateStatusInDB = exports.getSingleUserFromDB = exports.followUserIntoDB = exports.updateUserIntoDB = exports.getAllUsersFromDB = exports.createUserIntoDB = void 0;
+exports.getMeFromDB = exports.unfollowUserFromDB = exports.updateRoleInDB = exports.updateStatusInDB = exports.getSingleUserFromDB = exports.followUserIntoDB = exports.updateUserIntoDB = exports.getAllUsersFromDB = exports.createUserIntoDB = void 0;
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const mongoose_1 = __importDefault(require("mongoose"));
 const QueryBuilder_1 = __importDefault(require("../../builder/QueryBuilder"));
@@ -44,8 +44,12 @@ const getAllUsersFromDB = (query) => __awaiter(void 0, void 0, void 0, function*
 exports.getAllUsersFromDB = getAllUsersFromDB;
 const getSingleUserFromDB = (id) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield user_model_1.User.findById(id)
-        .populate('following', 'name email')
-        .populate('followers', 'name email')
+        .populate('following', 'name image')
+        .populate('followers', 'name image')
+        .populate({
+        path: 'posts',
+        populate: { path: 'author', select: 'name image' },
+    })
         .exec();
     return result;
 });
@@ -80,6 +84,11 @@ const updateStatusInDB = (id, payload) => __awaiter(void 0, void 0, void 0, func
     return result;
 });
 exports.updateStatusInDB = updateStatusInDB;
+const updateRoleInDB = (id, payload) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield user_model_1.User.findByIdAndUpdate(id, payload, { new: true });
+    return result;
+});
+exports.updateRoleInDB = updateRoleInDB;
 const followUserIntoDB = (currentUserId, targetUserId) => __awaiter(void 0, void 0, void 0, function* () {
     if (currentUserId === targetUserId) {
         throw new Error("You can't follow yourself");

@@ -36,7 +36,7 @@ exports.paymentIntoDB = paymentIntoDB;
 const getPaymentFromDB = (query) => __awaiter(void 0, void 0, void 0, function* () {
     const paymentQuery = new QueryBuilder_1.default(payment_model_1.Payment.find().populate({
         path: 'user',
-        select: 'name image email',
+        select: 'name status email',
     }), query)
         // .search()
         .fields()

@@ -9,6 +9,7 @@ import {
   getMeFromDB,
   getSingleUserFromDB,
   unfollowUserFromDB,
+  updateRoleInDB,
   updateStatusInDB,
   updateUserIntoDB,
 } from './user.service';
@@ -92,6 +93,17 @@ const updateStatus = catchAsync(async (req: Request, res: Response) => {
     data,
   });
 });
+const updateRole = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const data = await updateRoleInDB(id, req.body);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'Role updated successfully',
+    data,
+  });
+});
 
 const followUserController = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.user;
@@ -131,6 +143,7 @@ export {
   getSingleUser,
   followUserController,
   unfollowserController,
+  updateRole,
   updateStatus,
   getMe,
   // getArrayOfUsers,

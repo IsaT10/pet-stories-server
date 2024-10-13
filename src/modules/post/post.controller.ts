@@ -10,6 +10,7 @@ import {
   getAllPostsFromDB,
   updatePostInDB,
   deletePostFromDB,
+  updatePostStatusInDB,
 } from './post.service';
 
 const createPost = catchAsync(async (req: Request, res: Response) => {
@@ -92,6 +93,18 @@ const downvotePostController = catchAsync(
   }
 );
 
+const updatePostStatus = catchAsync(async (req: Request, res: Response) => {
+  const { postId } = req.params;
+  const data = await updatePostStatusInDB(postId, req.body);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'Post status updated successfully',
+    data,
+  });
+});
+
 export {
   createPost,
   upvotePostController,
@@ -100,4 +113,5 @@ export {
   getAllPosts,
   updatePost,
   deletePost,
+  updatePostStatus,
 };

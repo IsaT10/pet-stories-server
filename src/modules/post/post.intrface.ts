@@ -9,6 +9,7 @@ export interface TPost {
   upvotes: Types.ObjectId;
   downvotes: Types.ObjectId;
   isPremium: boolean;
+  isPublish: boolean;
 }
 
 export interface PostModel extends Model<TPost> {

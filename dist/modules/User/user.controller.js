@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getMe = exports.updateStatus = exports.unfollowserController = exports.followUserController = exports.getSingleUser = exports.updateUser = exports.getAllUsers = exports.createUser = void 0;
+exports.getMe = exports.updateStatus = exports.updateRole = exports.unfollowserController = exports.followUserController = exports.getSingleUser = exports.updateUser = exports.getAllUsers = exports.createUser = void 0;
 const catchAsync_1 = __importDefault(require("../../utils/catchAsync"));
 const sendResponse_1 = __importDefault(require("../../utils/sendResponse"));
 const http_status_1 = __importDefault(require("http-status"));
@@ -91,6 +91,17 @@ const updateStatus = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, v
     });
 }));
 exports.updateStatus = updateStatus;
+const updateRole = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const data = yield (0, user_service_1.updateRoleInDB)(id, req.body);
+    (0, sendResponse_1.default)(res, {
+        success: true,
+        statusCode: http_status_1.default.OK,
+        message: 'Role updated successfully',
+        data,
+    });
+}));
+exports.updateRole = updateRole;
 const followUserController = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.user;
     const { targetUserId } = req.params;

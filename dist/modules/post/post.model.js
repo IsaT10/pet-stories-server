@@ -23,6 +23,7 @@ const PostSchema = new mongoose_1.Schema({
     thumbnail: { type: String, required: false },
     author: { type: mongoose_1.Schema.Types.ObjectId, ref: 'User', required: true },
     isPremium: { type: Boolean },
+    isPublish: { type: Boolean },
     upvotes: [{ type: mongoose_1.Schema.Types.ObjectId, ref: 'User' }],
     downvotes: [{ type: mongoose_1.Schema.Types.ObjectId, ref: 'User' }],
 }, {

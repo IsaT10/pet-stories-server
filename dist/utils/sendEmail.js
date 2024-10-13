@@ -18,19 +18,25 @@ const config_1 = __importDefault(require("../config"));
 const sendEmail = (to, html) => __awaiter(void 0, void 0, void 0, function* () {
     const transporter = nodemailer_1.default.createTransport({
         host: config_1.default.nodemailer_host,
-        port: Number(config_1.default.nodemailer_port),
-        secure: config_1.default.node_env === 'production',
+        port: 587,
+        secure: false,
         auth: {
             user: config_1.default.auth_user,
             pass: config_1.default.auth_pass,
         },
     });
-    yield transporter.sendMail({
-        from: config_1.default.send_email, // sender address
-        to, // list of receivers
-        subject: ' Your password reset token ', // Subject line
-        text: 'Change password within 10 min', // plain text body
-        html, // html body
-    });
+    try {
+        const info = yield transporter.sendMail({
+            from: config_1.default.send_email, // sender address
+            to, // list of receivers
+            subject: 'Your password reset token', // Subject line
+            text: 'Change your password within 10 minutes', // Plain text body
+            html, // HTML body
+        });
+        console.log('Message sent: %s', info.messageId);
+    }
+    catch (error) {
+        console.error('Error sending email: ', error);
+    }
 });
 exports.sendEmail = sendEmail;

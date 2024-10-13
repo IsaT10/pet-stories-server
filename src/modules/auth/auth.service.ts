@@ -157,7 +157,7 @@ const forgetPasswordInDB = async (email: string) => {
     '10m'
   );
   const resetLink = `${config.reset_password_url}/reset-password?email=${user.email}&token=${resetToken}`;
-  sendEmail(user.email, resetLink);
+  await sendEmail(user.email, resetLink);
 };
 
 const resetPasswordInDB = async (

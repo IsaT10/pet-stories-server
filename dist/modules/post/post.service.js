@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deletePostFromDB = exports.getPostByIdFromDB = exports.getAllPostsFromDB = exports.updatePostInDB = exports.downvotePostInDB = exports.upvotePostInDB = exports.createPostIntoDB = void 0;
+exports.updatePostStatusInDB = exports.deletePostFromDB = exports.getPostByIdFromDB = exports.getAllPostsFromDB = exports.updatePostInDB = exports.downvotePostInDB = exports.upvotePostInDB = exports.createPostIntoDB = void 0;
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const http_status_1 = __importDefault(require("http-status"));
 const appError_1 = __importDefault(require("../../error/appError"));
@@ -37,7 +37,11 @@ const deletePostFromDB = (postId) => __awaiter(void 0, void 0, void 0, function*
 exports.deletePostFromDB = deletePostFromDB;
 const getAllPostsFromDB = (query) => __awaiter(void 0, void 0, void 0, function* () {
     const searchableFields = ['content', 'category'];
-    const postQuery = new QueryBuilder_1.default(post_model_1.Post.find()
+    let options = {};
+    if (query.isPremium) {
+        options = { isPublish: true };
+    }
+    const postQuery = new QueryBuilder_1.default(post_model_1.Post.find(options)
         .populate({
         path: 'comments',
         populate: { path: 'userId', select: 'name image' },
@@ -45,6 +49,7 @@ const getAllPostsFromDB = (query) => __awaiter(void 0, void 0, void 0, function*
         .populate('author', 'name image status'), query)
         .search(searchableFields)
         .fields()
+        .pagination()
         .sort()
         .filter();
     const result = yield postQuery.queryModel;
@@ -53,6 +58,11 @@ const getAllPostsFromDB = (query) => __awaiter(void 0, void 0, void 0, function*
     };
 });
 exports.getAllPostsFromDB = getAllPostsFromDB;
+const updatePostStatusInDB = (id, payload) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield post_model_1.Post.findByIdAndUpdate(id, payload, { new: true });
+    return result;
+});
+exports.updatePostStatusInDB = updatePostStatusInDB;
 const getPostByIdFromDB = (id) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield post_model_1.Post.findById(id).populate({
         path: 'comments',

@@ -20,6 +20,7 @@ router.patch('/update-post/:postId', (0, auth_1.auth)('user', 'admin'), multer_c
 }, post_controller_1.updatePost);
 router.get('/', post_controller_1.getAllPosts);
 router.delete('/:postId', post_controller_1.deletePost);
+router.patch('/change-status/:postId', (0, auth_1.auth)('admin'), post_controller_1.updatePostStatus);
 router.get('/:postId', (0, auth_1.auth)('user', 'admin'), post_controller_1.getPostById);
 router.patch('/:postId/upvote', (0, auth_1.auth)('user', 'admin'), post_controller_1.upvotePostController);
 router.patch('/:postId/downvote', (0, auth_1.auth)('user', 'admin'), post_controller_1.downvotePostController);

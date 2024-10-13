@@ -19,6 +19,7 @@ const createPostValidationSchema = zod_1.z.object({
         }),
         thumbnail: zod_1.z.string().optional(),
         isPremium: zod_1.z.boolean().optional(),
+        isPublish: zod_1.z.boolean().optional(),
     }),
 });
 exports.createPostValidationSchema = createPostValidationSchema;

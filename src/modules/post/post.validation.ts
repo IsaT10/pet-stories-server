@@ -17,6 +17,7 @@ const createPostValidationSchema = z.object({
     }),
     thumbnail: z.string().optional(),
     isPremium: z.boolean().optional(),
+    isPublish: z.boolean().optional(),
   }),
 });
 

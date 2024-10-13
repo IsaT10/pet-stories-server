@@ -7,6 +7,7 @@ import {
   getAllPosts,
   updatePost,
   deletePost,
+  updatePostStatus,
 } from './post.controller';
 import validateRequest from '../../middleware/validateRequest';
 import { createPostValidationSchema } from './post.validation';
@@ -39,6 +40,7 @@ router.patch(
 
 router.get('/', getAllPosts);
 router.delete('/:postId', deletePost);
+router.patch('/change-status/:postId', auth('admin'), updatePostStatus);
 router.get('/:postId', auth('user', 'admin'), getPostById);
 router.patch('/:postId/upvote', auth('user', 'admin'), upvotePostController);
 router.patch(

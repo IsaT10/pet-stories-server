@@ -103,7 +103,7 @@ const forgetPasswordInDB = (email) => __awaiter(void 0, void 0, void 0, function
     const jwtPayload = { email: user.email, role: user.role };
     const resetToken = (0, authutils_1.createToken)(jwtPayload, config_1.default.jwt_access_secret, '10m');
     const resetLink = `${config_1.default.reset_password_url}/reset-password?email=${user.email}&token=${resetToken}`;
-    (0, sendEmail_1.sendEmail)(user.email, resetLink);
+    yield (0, sendEmail_1.sendEmail)(user.email, resetLink);
 });
 exports.forgetPasswordInDB = forgetPasswordInDB;
 const resetPasswordInDB = (payload, token) => __awaiter(void 0, void 0, void 0, function* () {
