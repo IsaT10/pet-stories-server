@@ -10,6 +10,10 @@ export interface TPost {
   downvotes: Types.ObjectId;
   isPremium: boolean;
   isPublish: boolean;
+  sharedPostId?: Types.ObjectId;
+  sharedBy?: Types.ObjectId;
+  shareCount: number;
+  sharedText?: string;
 }
 
 export interface PostModel extends Model<TPost> {

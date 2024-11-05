@@ -26,6 +26,39 @@ const deletePostFromDB = async (postId: string) => {
   return result;
 };
 
+const updateSahredPostInDB = async (postId: string, payload: TPost) => {
+  const result = await Post.findByIdAndUpdate(postId, payload, { new: true });
+  return result;
+};
+
+const sharePostInDB = async (
+  postId: string,
+  userId: string,
+  payload: { sharedText: string }
+) => {
+  const postToShare = await Post.findById(postId);
+  if (!postToShare) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Post to share not found!');
+  }
+
+  const sharedPost = await Post.create({
+    content: postToShare.content,
+    category: postToShare.category,
+    thumbnail: postToShare.thumbnail,
+    sharedText: payload.sharedText,
+    author: userId,
+    isPublish: true,
+    sharedPostId: postToShare._id,
+    // postAuth: userId, // ID of the user who shared the post
+  });
+
+  await Post.findByIdAndUpdate(postId, {
+    shareCount: postToShare.shareCount + 1,
+  });
+
+  return sharedPost;
+};
+
 const getAllPostsFromDB = async (query: Record<string, unknown>) => {
   const searchableFields = ['content', 'category'];
   let options = {};
@@ -40,7 +73,12 @@ const getAllPostsFromDB = async (query: Record<string, unknown>) => {
         path: 'comments',
         populate: { path: 'userId', select: 'name image' },
       })
+      .populate({
+        path: 'sharedPostId',
+        populate: { path: 'author', select: 'name image status' },
+      })
       .populate('author', 'name image status'),
+    // .populate('sharedBy', 'name image'),
     query
   )
     .search(searchableFields)
@@ -112,4 +150,6 @@ export {
   getPostByIdFromDB,
   deletePostFromDB,
   updatePostStatusInDB,
+  sharePostInDB,
+  updateSahredPostInDB,
 };

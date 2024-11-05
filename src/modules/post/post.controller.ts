@@ -11,6 +11,8 @@ import {
   updatePostInDB,
   deletePostFromDB,
   updatePostStatusInDB,
+  sharePostInDB,
+  updateSahredPostInDB,
 } from './post.service';
 
 const createPost = catchAsync(async (req: Request, res: Response) => {
@@ -27,6 +29,17 @@ const updatePost = catchAsync(async (req: Request, res: Response) => {
   // const { id } = req.user;
   const { postId } = req.params;
   const data = await updatePostInDB(postId, req.body, req?.file);
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.CREATED,
+    message: 'Post updated successfully',
+    data,
+  });
+});
+const updateSharedPost = catchAsync(async (req: Request, res: Response) => {
+  // const { id } = req.user;
+  const { postId } = req.params;
+  const data = await updateSahredPostInDB(postId, req.body);
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.CREATED,
@@ -92,6 +105,18 @@ const downvotePostController = catchAsync(
     });
   }
 );
+const sharePostController = catchAsync(async (req: Request, res: Response) => {
+  const { postId } = req.params;
+  const { id } = req.user;
+
+  const data = await sharePostInDB(postId, id, req.body);
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.CREATED,
+    message: 'Post shared successfully',
+    data,
+  });
+});
 
 const updatePostStatus = catchAsync(async (req: Request, res: Response) => {
   const { postId } = req.params;
@@ -113,5 +138,7 @@ export {
   getAllPosts,
   updatePost,
   deletePost,
+  sharePostController,
+  updateSharedPost,
   updatePostStatus,
 };

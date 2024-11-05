@@ -8,6 +8,8 @@ import {
   updatePost,
   deletePost,
   updatePostStatus,
+  sharePostController,
+  updateSharedPost,
 } from './post.controller';
 import validateRequest from '../../middleware/validateRequest';
 import { createPostValidationSchema } from './post.validation';
@@ -26,6 +28,13 @@ router.post(
   },
   validateRequest(createPostValidationSchema),
   createPost
+);
+
+router.post('/share/:postId', auth('user', 'admin'), sharePostController);
+router.patch(
+  '/share/update-post/:postId',
+  auth('user', 'admin'),
+  updateSharedPost
 );
 router.patch(
   '/update-post/:postId',

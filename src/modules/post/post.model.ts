@@ -5,15 +5,18 @@ import { PostModel, TPost } from './post.intrface';
 
 const PostSchema = new Schema<TPost>(
   {
-    // title: { type: String, required: true },
-    content: { type: String, required: true },
-    category: { type: String, enum: ['Tips', 'Story'], required: true },
-    thumbnail: { type: String, required: false },
-    author: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    content: { type: String },
+    category: { type: String, enum: ['Tips', 'Story'] },
+    thumbnail: { type: String },
+    author: { type: Schema.Types.ObjectId, ref: 'User' },
     isPremium: { type: Boolean },
     isPublish: { type: Boolean },
     upvotes: [{ type: Schema.Types.ObjectId, ref: 'User' }],
     downvotes: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+    sharedPostId: { type: Schema.Types.ObjectId, ref: 'Post' },
+    sharedBy: { type: Schema.Types.ObjectId, ref: 'User' },
+    shareCount: { type: Number, default: 0 },
+    sharedText: { type: String },
   },
   {
     timestamps: true,
