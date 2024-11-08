@@ -1,4 +1,6 @@
 import AppError from '../../error/appError';
+import { Notification } from '../notification/notification.model';
+import { Post } from '../post/post.model';
 import { TComment } from './comment.interface';
 import { Comment } from './comment.model';
 import httpStatus from 'http-status';
@@ -9,6 +11,14 @@ const createCommentIntoDB = async (
   payload: TComment
 ) => {
   const result = await Comment.create({ ...payload, userId, postId });
+
+  const post = await Post.findById(result?.postId);
+
+  await Notification.create({
+    user: post?.author,
+    fromUser: userId,
+    type: 'comment',
+  });
   return result;
 };
 

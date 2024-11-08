@@ -14,6 +14,8 @@ router.post('/create-post', (0, auth_1.auth)('user', 'admin'), multer_config_1.m
     req.body = JSON.parse(req.body.data);
     next();
 }, (0, validateRequest_1.default)(post_validation_1.createPostValidationSchema), post_controller_1.createPost);
+router.post('/share/:postId', (0, auth_1.auth)('user', 'admin'), post_controller_1.sharePostController);
+router.patch('/share/update-post/:postId', (0, auth_1.auth)('user', 'admin'), post_controller_1.updateSharedPost);
 router.patch('/update-post/:postId', (0, auth_1.auth)('user', 'admin'), multer_config_1.multerUpload.single('image'), (req, res, next) => {
     req.body = JSON.parse(req.body.data);
     next();

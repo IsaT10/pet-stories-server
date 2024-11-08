@@ -21,6 +21,7 @@ const handleValidationError_1 = __importDefault(require("../../error/handleValid
 const handleDuplicate_1 = __importDefault(require("../../error/handleDuplicate"));
 const http_status_1 = __importDefault(require("http-status"));
 const appError_1 = __importDefault(require("../../error/appError"));
+const notification_model_1 = require("../notification/notification.model");
 const createUserIntoDB = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield user_model_1.User.create(payload);
     return result;
@@ -98,6 +99,11 @@ const followUserIntoDB = (currentUserId, targetUserId) => __awaiter(void 0, void
         session.startTransaction();
         const updatedCurrentUser = yield user_model_1.User.findByIdAndUpdate(currentUserId, { $addToSet: { following: targetUserId } }, { new: true, session });
         yield user_model_1.User.findByIdAndUpdate(targetUserId, { $addToSet: { followers: currentUserId } }, { new: true, session });
+        yield notification_model_1.Notification.create({
+            user: targetUserId,
+            fromUser: currentUserId,
+            type: 'follow',
+        });
         yield session.commitTransaction();
         yield session.endSession();
         return updatedCurrentUser;

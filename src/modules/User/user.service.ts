@@ -7,6 +7,7 @@ import handleValidationError from '../../error/handleValidationError';
 import handleDuplicateError from '../../error/handleDuplicate';
 import httpStatus from 'http-status';
 import AppError from '../../error/appError';
+import { Notification } from '../notification/notification.model';
 
 const createUserIntoDB = async (payload: TUser) => {
   const result = await User.create(payload);
@@ -115,6 +116,12 @@ const followUserIntoDB = async (
       { $addToSet: { followers: currentUserId } },
       { new: true, session }
     );
+
+    await Notification.create({
+      user: targetUserId,
+      fromUser: currentUserId,
+      type: 'follow',
+    });
 
     await session.commitTransaction();
     await session.endSession();

@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updatePostStatus = exports.deletePost = exports.updatePost = exports.getAllPosts = exports.getPostById = exports.downvotePostController = exports.upvotePostController = exports.createPost = void 0;
+exports.updatePostStatus = exports.updateSharedPost = exports.sharePostController = exports.deletePost = exports.updatePost = exports.getAllPosts = exports.getPostById = exports.downvotePostController = exports.upvotePostController = exports.createPost = void 0;
 const catchAsync_1 = __importDefault(require("../../utils/catchAsync"));
 const sendResponse_1 = __importDefault(require("../../utils/sendResponse"));
 const http_status_1 = __importDefault(require("http-status"));
@@ -40,6 +40,18 @@ const updatePost = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, voi
     });
 }));
 exports.updatePost = updatePost;
+const updateSharedPost = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    // const { id } = req.user;
+    const { postId } = req.params;
+    const data = yield (0, post_service_1.updateSahredPostInDB)(postId, req.body);
+    (0, sendResponse_1.default)(res, {
+        success: true,
+        statusCode: http_status_1.default.CREATED,
+        message: 'Post updated successfully',
+        data,
+    });
+}));
+exports.updateSharedPost = updateSharedPost;
 const getAllPosts = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const data = yield (0, post_service_1.getAllPostsFromDB)(req.query);
     (0, sendResponse_1.default)(res, {
@@ -96,6 +108,18 @@ const downvotePostController = (0, catchAsync_1.default)((req, res) => __awaiter
     });
 }));
 exports.downvotePostController = downvotePostController;
+const sharePostController = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { postId } = req.params;
+    const { id } = req.user;
+    const data = yield (0, post_service_1.sharePostInDB)(postId, id, req.body);
+    (0, sendResponse_1.default)(res, {
+        success: true,
+        statusCode: http_status_1.default.CREATED,
+        message: 'Post shared successfully',
+        data,
+    });
+}));
+exports.sharePostController = sharePostController;
 const updatePostStatus = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { postId } = req.params;
     const data = yield (0, post_service_1.updatePostStatusInDB)(postId, req.body);

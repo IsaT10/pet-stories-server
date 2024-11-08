@@ -2,6 +2,7 @@ import { Schema, model } from 'mongoose';
 import httpStatus from 'http-status';
 import AppError from '../../error/appError';
 import { PostModel, TPost } from './post.intrface';
+import { Notification } from '../notification/notification.model';
 
 const PostSchema = new Schema<TPost>(
   {
@@ -49,6 +50,12 @@ PostSchema.statics.upvotePost = async function (
       await this.findByIdAndUpdate(postId, {
         $addToSet: { upvotes: userId },
       });
+
+      await Notification.create({
+        user: post?.author,
+        fromUser: userId,
+        type: 'upvote',
+      });
     }
   }
 
@@ -81,6 +88,12 @@ PostSchema.statics.downvotePost = async function (
       // Add user to downvotes (increment by 1)
       await this.findByIdAndUpdate(postId, {
         $addToSet: { downvotes: userId },
+      });
+
+      await Notification.create({
+        user: post?.author,
+        fromUser: userId,
+        type: 'downvote',
       });
     }
   }

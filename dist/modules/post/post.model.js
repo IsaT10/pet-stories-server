@@ -16,16 +16,20 @@ exports.Post = void 0;
 const mongoose_1 = require("mongoose");
 const http_status_1 = __importDefault(require("http-status"));
 const appError_1 = __importDefault(require("../../error/appError"));
+const notification_model_1 = require("../notification/notification.model");
 const PostSchema = new mongoose_1.Schema({
-    // title: { type: String, required: true },
-    content: { type: String, required: true },
-    category: { type: String, enum: ['Tips', 'Story'], required: true },
-    thumbnail: { type: String, required: false },
-    author: { type: mongoose_1.Schema.Types.ObjectId, ref: 'User', required: true },
+    content: { type: String },
+    category: { type: String, enum: ['Tips', 'Story'] },
+    thumbnail: { type: String },
+    author: { type: mongoose_1.Schema.Types.ObjectId, ref: 'User' },
     isPremium: { type: Boolean },
     isPublish: { type: Boolean },
     upvotes: [{ type: mongoose_1.Schema.Types.ObjectId, ref: 'User' }],
     downvotes: [{ type: mongoose_1.Schema.Types.ObjectId, ref: 'User' }],
+    sharedPostId: { type: mongoose_1.Schema.Types.ObjectId, ref: 'Post' },
+    sharedBy: { type: mongoose_1.Schema.Types.ObjectId, ref: 'User' },
+    shareCount: { type: Number, default: 0 },
+    sharedText: { type: String },
 }, {
     timestamps: true,
     toJSON: { virtuals: true },
@@ -54,6 +58,11 @@ PostSchema.statics.upvotePost = function (postId, userId) {
                 // Add user to upvotes (increment by 1)
                 yield this.findByIdAndUpdate(postId, {
                     $addToSet: { upvotes: userId },
+                });
+                yield notification_model_1.Notification.create({
+                    user: post === null || post === void 0 ? void 0 : post.author,
+                    fromUser: userId,
+                    type: 'upvote',
                 });
             }
         }
@@ -85,6 +94,11 @@ PostSchema.statics.downvotePost = function (postId, userId) {
                 // Add user to downvotes (increment by 1)
                 yield this.findByIdAndUpdate(postId, {
                     $addToSet: { downvotes: userId },
+                });
+                yield notification_model_1.Notification.create({
+                    user: post === null || post === void 0 ? void 0 : post.author,
+                    fromUser: userId,
+                    type: 'downvote',
                 });
             }
         }

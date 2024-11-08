@@ -4,6 +4,7 @@ import authRoute from '../modules/auth/auth.route';
 import postRoute from '../modules/post/post.route';
 import commentRoute from '../modules/comment/comment.route';
 import paymentRoute from '../modules/payment/payment.route';
+import notificationRoute from '../modules/notification/notification.route';
 
 const router = Router();
 const moduleRoutes = [
@@ -12,6 +13,7 @@ const moduleRoutes = [
   { path: '/posts', route: postRoute },
   { path: '/comments', route: commentRoute },
   { path: '/payments', route: paymentRoute },
+  { path: '/notifications', route: notificationRoute },
 ];
 
 moduleRoutes.forEach((route) => router.use(route.path, route.route));

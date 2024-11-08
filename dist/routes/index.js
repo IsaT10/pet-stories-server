@@ -9,6 +9,7 @@ const auth_route_1 = __importDefault(require("../modules/auth/auth.route"));
 const post_route_1 = __importDefault(require("../modules/post/post.route"));
 const comment_route_1 = __importDefault(require("../modules/comment/comment.route"));
 const payment_route_1 = __importDefault(require("../modules/payment/payment.route"));
+const notification_route_1 = __importDefault(require("../modules/notification/notification.route"));
 const router = (0, express_1.Router)();
 const moduleRoutes = [
     { path: '/users', route: user_route_1.default },
@@ -16,6 +17,7 @@ const moduleRoutes = [
     { path: '/posts', route: post_route_1.default },
     { path: '/comments', route: comment_route_1.default },
     { path: '/payments', route: payment_route_1.default },
+    { path: '/notifications', route: notification_route_1.default },
 ];
 moduleRoutes.forEach((route) => router.use(route.path, route.route));
 exports.default = router;

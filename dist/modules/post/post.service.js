@@ -12,12 +12,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updatePostStatusInDB = exports.deletePostFromDB = exports.getPostByIdFromDB = exports.getAllPostsFromDB = exports.updatePostInDB = exports.downvotePostInDB = exports.upvotePostInDB = exports.createPostIntoDB = void 0;
+exports.updateSahredPostInDB = exports.sharePostInDB = exports.updatePostStatusInDB = exports.deletePostFromDB = exports.getPostByIdFromDB = exports.getAllPostsFromDB = exports.updatePostInDB = exports.downvotePostInDB = exports.upvotePostInDB = exports.createPostIntoDB = void 0;
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const http_status_1 = __importDefault(require("http-status"));
 const appError_1 = __importDefault(require("../../error/appError"));
 const post_model_1 = require("./post.model");
 const QueryBuilder_1 = __importDefault(require("../../builder/QueryBuilder"));
+const notification_model_1 = require("../notification/notification.model");
 const createPostIntoDB = (authorId, payload, file) => __awaiter(void 0, void 0, void 0, function* () {
     const postData = Object.assign(Object.assign({}, payload), { author: authorId, thumbnail: file === null || file === void 0 ? void 0 : file.path });
     const result = yield post_model_1.Post.create(postData);
@@ -35,6 +36,37 @@ const deletePostFromDB = (postId) => __awaiter(void 0, void 0, void 0, function*
     return result;
 });
 exports.deletePostFromDB = deletePostFromDB;
+const updateSahredPostInDB = (postId, payload) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield post_model_1.Post.findByIdAndUpdate(postId, payload, { new: true });
+    return result;
+});
+exports.updateSahredPostInDB = updateSahredPostInDB;
+const sharePostInDB = (postId, userId, payload) => __awaiter(void 0, void 0, void 0, function* () {
+    const postToShare = yield post_model_1.Post.findById(postId);
+    if (!postToShare) {
+        throw new appError_1.default(http_status_1.default.NOT_FOUND, 'Post to share not found!');
+    }
+    const sharedPost = yield post_model_1.Post.create({
+        content: postToShare.content,
+        category: postToShare.category,
+        thumbnail: postToShare.thumbnail,
+        sharedText: payload.sharedText,
+        author: userId,
+        isPublish: true,
+        sharedPostId: postToShare._id,
+        // postAuth: userId, // ID of the user who shared the post
+    });
+    yield post_model_1.Post.findByIdAndUpdate(postId, {
+        shareCount: postToShare.shareCount + 1,
+    });
+    yield notification_model_1.Notification.create({
+        user: postToShare === null || postToShare === void 0 ? void 0 : postToShare.author,
+        fromUser: userId,
+        type: 'share',
+    });
+    return sharedPost;
+});
+exports.sharePostInDB = sharePostInDB;
 const getAllPostsFromDB = (query) => __awaiter(void 0, void 0, void 0, function* () {
     const searchableFields = ['content', 'category'];
     let options = {};
@@ -46,7 +78,13 @@ const getAllPostsFromDB = (query) => __awaiter(void 0, void 0, void 0, function*
         path: 'comments',
         populate: { path: 'userId', select: 'name image' },
     })
-        .populate('author', 'name image status'), query)
+        .populate({
+        path: 'sharedPostId',
+        populate: { path: 'author', select: 'name image status' },
+    })
+        .populate('author', 'name image status'), 
+    // .populate('sharedBy', 'name image'),
+    query)
         .search(searchableFields)
         .fields()
         .pagination()

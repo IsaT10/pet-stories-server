@@ -14,10 +14,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteCommentFromDB = exports.updateCommentInDB = exports.getCommentByIdFromDB = exports.createCommentIntoDB = void 0;
 const appError_1 = __importDefault(require("../../error/appError"));
+const notification_model_1 = require("../notification/notification.model");
+const post_model_1 = require("../post/post.model");
 const comment_model_1 = require("./comment.model");
 const http_status_1 = __importDefault(require("http-status"));
 const createCommentIntoDB = (userId, postId, payload) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield comment_model_1.Comment.create(Object.assign(Object.assign({}, payload), { userId, postId }));
+    const post = yield post_model_1.Post.findById(result === null || result === void 0 ? void 0 : result.postId);
+    yield notification_model_1.Notification.create({
+        user: post === null || post === void 0 ? void 0 : post.author,
+        fromUser: userId,
+        type: 'comment',
+    });
     return result;
 });
 exports.createCommentIntoDB = createCommentIntoDB;

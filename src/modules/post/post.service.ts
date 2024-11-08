@@ -4,6 +4,7 @@ import AppError from '../../error/appError';
 import { TPost } from './post.intrface';
 import { Post } from './post.model';
 import QueryBuilder from '../../builder/QueryBuilder';
+import { Notification } from '../notification/notification.model';
 
 const createPostIntoDB = async (
   authorId: string,
@@ -54,6 +55,12 @@ const sharePostInDB = async (
 
   await Post.findByIdAndUpdate(postId, {
     shareCount: postToShare.shareCount + 1,
+  });
+
+  await Notification.create({
+    user: postToShare?.author,
+    fromUser: userId,
+    type: 'share',
   });
 
   return sharedPost;
